@@ -2,7 +2,6 @@
 
 namespace app\jobs;
 
-use app\interfaces\SmsClientInterface;
 use app\models\Book;
 use app\models\Subscription;
 use yii\base\BaseObject;
@@ -10,10 +9,8 @@ use yii\queue\JobInterface;
 
 class SendSmsJob extends BaseObject implements JobInterface
 {
-    private $bookId;
-    private $message;
-
-    private ?SmsClientInterface $smsClient = null;
+    public $bookId;
+    public $message;
 
     public function __construct($config = [])
     {
@@ -43,21 +40,28 @@ class SendSmsJob extends BaseObject implements JobInterface
             $this->message = "New book '{$book->title}' by author(s) {$authorNames} is now available!";
         }
 
+        $count = 0;
+        $totalSubscriptions = count($subscriptions);
+
         foreach ($subscriptions as $subscription) {
             try {
-                $this->smsClient->sendSms($subscription->phone, $this->message);
+                \Yii::$container->get(\app\interfaces\SmsClientInterface::class)->sendSms($subscription->phone, $this->message);
                 \Yii::info("SMS sent successfully to {$subscription->phone}", 'sms');
             } catch (\app\exceptions\SmsClientException $e) {
                 \Yii::error("Failed to send SMS to {$subscription->phone}: {$e->getMessage()}", 'sms');
             }
+
+            $count++;
+
+            // Логируем прогресс каждые 10 отправок
+            if ($count % 10 === 0) {
+                \Yii::info("Processed {$count}/{$totalSubscriptions} subscriptions", 'sms');
+            }
         }
 
-        \Yii::info("SMS sending job completed for book ID: {$this->bookId}", 'sms');
-    }
+        \Yii::info("Completed processing all {$totalSubscriptions} subscriptions", 'sms');
 
-    public function setSmsClient(SmsClientInterface $smsClient): void
-    {
-        $this->smsClient = $smsClient;
+        \Yii::info("SMS sending job completed for book ID: {$this->bookId}", 'sms');
     }
 
     public function setBookId($bookId): void

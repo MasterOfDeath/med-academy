@@ -68,6 +68,9 @@ $config = [
                 'class' => 'app\components\SmsClient',
                 'apiKey' => $params['smspilot_api_key'] ?? '',
             ],
+            \Psr\Http\Client\ClientInterface::class => [
+                'class' => \GuzzleHttp\Client::class,
+            ],
         ],
     ],
     'params' => $params,

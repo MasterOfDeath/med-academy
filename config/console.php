@@ -23,6 +23,17 @@ $config = [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
                 ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['info', 'error', 'warning'],
+                    'categories' => ['sms'],
+                    'logFile' => 'php://stdout',
+                    'exportInterval' => 1,
+                    'logVars' => [],
+                    'prefix' => function ($message) {
+                        return '';
+                    },
+                ],
             ],
         ],
         'db' => $db,
@@ -46,6 +57,9 @@ $config = [
             'app\interfaces\SmsClientInterface' => [
                 'class' => 'app\components\SmsClient',
                 'apiKey' => $params['smspilot_api_key'] ?? '',
+            ],
+            \Psr\Http\Client\ClientInterface::class => [
+                'class' => \GuzzleHttp\Client::class,
             ],
         ],
     ],
