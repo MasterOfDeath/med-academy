@@ -2,8 +2,8 @@
 
 namespace app\factories;
 
-use app\jobs\SendSmsJob;
 use app\interfaces\SmsClientInterface;
+use app\jobs\SendSmsJob;
 
 class SendSmsJobFactory
 {
@@ -18,6 +18,7 @@ class SendSmsJobFactory
     {
         $job = new SendSmsJob($config);
         $job->setSmsClient($this->smsClient);
+
         return $job;
     }
 }

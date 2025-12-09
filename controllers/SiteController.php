@@ -5,10 +5,9 @@ namespace app\controllers;
 use app\models\LoginForm;
 use app\models\User;
 use Yii;
-use yii\web\BadRequestHttpException;
-use yii\web\Controller;
-use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\web\Controller;
 
 /**
  * Site controller
@@ -74,8 +73,6 @@ class SiteController extends Controller
 
     /**
      * Signs user up.
-     *
-     * @return mixed
      */
     public function actionSignup()
     {
@@ -95,12 +92,10 @@ class SiteController extends Controller
 
     /**
      * Logs in a user.
-     *
-     * @return mixed
      */
     public function actionLogin()
     {
-        if (!Yii::$app->user->isGuest) {
+        if (! Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
@@ -110,6 +105,7 @@ class SiteController extends Controller
         }
 
         $model->password = '';
+
         return $this->render('login', [
             'model' => $model,
         ]);
@@ -117,8 +113,6 @@ class SiteController extends Controller
 
     /**
      * Logs out the current user.
-     *
-     * @return mixed
      */
     public function actionLogout()
     {

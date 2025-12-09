@@ -2,16 +2,13 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "book_authors".
  *
- * @property int $book_id
- * @property int $author_id
- *
+ * @property int     $book_id
+ * @property int     $author_id
  * @property Authors $author
- * @property Books $book
+ * @property Books   $book
  */
 class BookAuthor extends \yii\db\ActiveRecord
 {

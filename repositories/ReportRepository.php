@@ -12,17 +12,18 @@ class ReportRepository
 
     /**
      * @param int $year Год для отчета
+     *
      * @return array Результаты отчета
      */
     public function getTopAuthorsByYear(int $year): array
     {
         $cacheKey = [
             self::CACHE_TAG,
-            'year' => $year
+            'year' => $year,
         ];
 
         $dependency = new TagDependency([
-            'tags' => [self::CACHE_TAG]
+            'tags' => [self::CACHE_TAG],
         ]);
 
         $result = Yii::$app->cache->get($cacheKey);

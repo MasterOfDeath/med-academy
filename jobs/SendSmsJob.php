@@ -2,12 +2,11 @@
 
 namespace app\jobs;
 
+use app\interfaces\SmsClientInterface;
+use app\models\Book;
+use app\models\Subscription;
 use yii\base\BaseObject;
 use yii\queue\JobInterface;
-use app\models\Subscription;
-use app\models\Book;
-use app\models\Author;
-use app\interfaces\SmsClientInterface;
 
 class SendSmsJob extends BaseObject implements JobInterface
 {
@@ -25,20 +24,17 @@ class SendSmsJob extends BaseObject implements JobInterface
     {
         \Yii::info("Starting SMS sending job for book ID: {$this->bookId}", 'sms');
         
-        // Получаем книгу и автора
         $book = Book::findOne($this->bookId);
-        if (!$book) {
+        if (! $book) {
             return;
         }
 
-        // Находим всех подписчиков авторов книги
         $authorIds = $book->getAuthorIds();
         $subscriptions = Subscription::find()
             ->where(['author_id' => $authorIds])
             ->all();
 
-        // Формируем сообщение
-        if (!$this->message) {
+        if (! $this->message) {
             $authors = [];
             foreach ($book->authors as $author) {
                 $authors[] = $author->full_name;
@@ -47,7 +43,6 @@ class SendSmsJob extends BaseObject implements JobInterface
             $this->message = "New book '{$book->title}' by author(s) {$authorNames} is now available!";
         }
 
-        // Отправляем SMS каждому подписчику
         foreach ($subscriptions as $subscription) {
             try {
                 $this->smsClient->sendSms($subscription->phone, $this->message);
@@ -56,7 +51,7 @@ class SendSmsJob extends BaseObject implements JobInterface
                 \Yii::error("Failed to send SMS to {$subscription->phone}: {$e->getMessage()}", 'sms');
             }
         }
-        
+
         \Yii::info("SMS sending job completed for book ID: {$this->bookId}", 'sms');
     }
 

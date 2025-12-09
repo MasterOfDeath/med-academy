@@ -2,15 +2,12 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "subscriptions".
  *
- * @property int $id
- * @property int $author_id
- * @property string $phone
- *
+ * @property int     $id
+ * @property int     $author_id
+ * @property string  $phone
  * @property Authors $author
  */
 class Subscription extends \yii\db\ActiveRecord

@@ -2,10 +2,10 @@
 
 namespace app\components;
 
-use app\interfaces\SmsClientInterface;
 use app\exceptions\SmsClientException;
-use yii\base\BaseObject;
+use app\interfaces\SmsClientInterface;
 use Yii;
+use yii\base\BaseObject;
 use yii\base\InvalidConfigException;
 
 class SmsClient extends BaseObject implements SmsClientInterface
@@ -29,9 +29,9 @@ class SmsClient extends BaseObject implements SmsClientInterface
             'send' => [
                 [
                     'phone' => $phone,
-                    'text' => $message
-                ]
-            ]
+                    'text' => $message,
+                ],
+            ],
         ];
 
         // Для тестирования будем просто логировать отправку
@@ -53,9 +53,11 @@ class SmsClient extends BaseObject implements SmsClientInterface
 
         if ($error) {
             Yii::error("SMS sending error: {$error}", 'sms');
+
             throw new SmsClientException("SMS sending error: {$error}");
         } elseif ($httpCode !== 200) {
             Yii::error("SMS sending failed with HTTP code: {$httpCode}, response: {$response}", 'sms');
+
             throw new SmsClientException("SMS sending failed with HTTP code: {$httpCode}, response: {$response}");
         } else {
             Yii::info("SMS successfully sent to {$phone}", 'sms');

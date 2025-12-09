@@ -2,13 +2,13 @@
 
 namespace app\controllers;
 
-use app\models\Book;
 use app\factories\SendSmsJobFactory;
+use app\models\Book;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use yii\web\UploadedFile;
 
 /**
@@ -87,9 +87,12 @@ class BookController extends Controller
 
     /**
      * Displays a single Book model.
+     *
      * @param int $id ID
-     * @return string
+     *
      * @throws NotFoundHttpException if the model cannot be found
+     *
+     * @return string
      */
     public function actionView($id)
     {
@@ -101,6 +104,7 @@ class BookController extends Controller
     /**
      * Creates a new Book model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return string|\yii\web\Response
      */
     public function actionCreate()
@@ -109,23 +113,19 @@ class BookController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                // Загружаем файл обложки
                 $model->cover_image_file = UploadedFile::getInstance($model, 'cover_image_file');
                 
                 if ($model->validate()) {
                     if ($model->save()) {
-                        // Сохраняем файл обложки
                         $model->uploadCoverImage();
                         
-                        // Сохраняем связи с авторами
                         $authorIds = \Yii::$app->request->post('Book')['author_ids'];
-                        if (!empty($authorIds)) {
+                        if (! empty($authorIds)) {
                             $model->linkAuthors($authorIds);
                         }
                         
-                        // Добавляем задачу в очередь на отправку SMS
                         $job = $this->smsJobFactory->create([
-                            'bookId' => $model->id
+                            'bookId' => $model->id,
                         ]);
                         \Yii::$app->queue->push($job);
 
@@ -145,40 +145,28 @@ class BookController extends Controller
     /**
      * Updates an existing Book model.
      * If update is successful, the browser will be redirected to the 'view' page.
+     *
      * @param int $id ID
-     * @return string|\yii\web\Response
+     *
      * @throws NotFoundHttpException if the model cannot be found
+     *
+     * @return string|\yii\web\Response
      */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post())) {
-            // Загружаем файл обложки
             $model->cover_image_file = UploadedFile::getInstance($model, 'cover_image_file');
             
             $oldAuthorIds = $model->getAuthorIds();
             if ($model->validate()) {
                 if ($model->save()) {
-                    // Сохраняем файл обложки
                     $model->uploadCoverImage();
                     
-                    // Сохраняем связи с авторами
                     $authorIds = \Yii::$app->request->post('Book')['author_ids'];
-                    if (!empty($authorIds)) {
+                    if (! empty($authorIds)) {
                         $model->linkAuthors($authorIds);
-                    }
-                    
-                    // Проверяем, изменились ли авторы, и если да, то отправляем уведомления
-                    $newAuthorIds = $model->getAuthorIds();
-                    $authorsChanged = array_diff($oldAuthorIds, $newAuthorIds) || array_diff($newAuthorIds, $oldAuthorIds);
-                    
-                    if ($authorsChanged) {
-                        // Добавляем задачу в очередь на отправку SMS
-                        $job = $this->smsJobFactory->create([
-                            'bookId' => $model->id
-                        ]);
-                        \Yii::$app->queue->push($job);
                     }
 
                     return $this->redirect(['view', 'id' => $model->id]);
@@ -194,9 +182,12 @@ class BookController extends Controller
     /**
      * Deletes an existing Book model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     *
      * @param int $id ID
-     * @return \yii\web\Response
+     *
      * @throws NotFoundHttpException if the model cannot be found
+     *
+     * @return \yii\web\Response
      */
     public function actionDelete($id)
     {
@@ -208,9 +199,12 @@ class BookController extends Controller
     /**
      * Finds the Book model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param int $id ID
-     * @return Book the loaded model
+     *
      * @throws NotFoundHttpException if the model cannot be found
+     *
+     * @return Book the loaded model
      */
     protected function findModel($id)
     {

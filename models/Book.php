@@ -8,14 +8,13 @@ use yii\web\UploadedFile;
 /**
  * This is the model class for table "books".
  *
- * @property int $id
- * @property string $title
- * @property int|null $year
- * @property string|null $description
- * @property string|null $isbn
- * @property string|null $cover_image
- *
- * @property Author[] $authors
+ * @property int          $id
+ * @property string       $title
+ * @property int|null     $year
+ * @property string|null  $description
+ * @property string|null  $isbn
+ * @property string|null  $cover_image
+ * @property Author[]     $authors
  * @property BookAuthor[] $bookAuthors
  */
 class Book extends \yii\db\ActiveRecord
@@ -47,7 +46,7 @@ class Book extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['title', 'isbn', 'cover_image'], 'string', 'max' => 255],
             [['author_ids'], 'safe'],
-            [['cover_image_file'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, gif', 'maxSize' => 1024*1024], // Максимальный размер 1MB
+            [['cover_image_file'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, gif', 'maxSize' => 1024 * 1024], // Максимальный размер 1MB
         ];
     }
 
@@ -119,7 +118,7 @@ class Book extends \yii\db\ActiveRecord
             $filename = 'book_' . $this->id . '_' . time() . '.' . $this->cover_image_file->extension;
             
             $uploadDir = Yii::getAlias('@webroot/uploads');
-            if (!file_exists($uploadDir)) {
+            if (! file_exists($uploadDir)) {
                 mkdir($uploadDir, 0775, true);
             }
             

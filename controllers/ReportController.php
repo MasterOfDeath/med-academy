@@ -2,11 +2,9 @@
 
 namespace app\controllers;
 
-use Yii;
-use yii\web\Controller;
-use app\models\Author;
-use yii\data\ArrayDataProvider;
 use app\repositories\ReportRepository;
+use yii\data\ArrayDataProvider;
+use yii\web\Controller;
 
 class ReportController extends Controller
 {
@@ -21,26 +19,27 @@ class ReportController extends Controller
 
     /**
      * @param int $year Год для отчета (по умолчанию текущий год)
+     *
      * @return string
      */
-   public function actionTopAuthors(?int $year = null)
-   {
-       if ($year === null) {
-           $year = (int) date('Y'); // По умолчанию текущий год
-       }
+    public function actionTopAuthors(?int $year = null)
+    {
+        if ($year === null) {
+            $year = (int) date('Y'); // По умолчанию текущий год
+        }
 
-       $results = $this->reportRepository->getTopAuthorsByYear($year);
+        $results = $this->reportRepository->getTopAuthorsByYear($year);
 
-       $dataProvider = new ArrayDataProvider([
-           'allModels' => $results,
-           'pagination' => [
-               'pageSize' => 10,
-           ],
-       ]);
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $results,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
 
-       return $this->render('top-authors', [
-           'dataProvider' => $dataProvider,
-           'year' => $year,
-       ]);
-   }
+        return $this->render('top-authors', [
+            'dataProvider' => $dataProvider,
+            'year' => $year,
+        ]);
+    }
 }
