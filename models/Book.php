@@ -88,16 +88,23 @@ class Book extends \yii\db\ActiveRecord
     
     /**
      * @param array $authorIds IDs авторов
+     *
+     * @throws \Exception
      */
     public function linkAuthors($authorIds)
     {
-        BookAuthor::deleteAll(['book_id' => $this->id]);
+        $deleteResult = BookAuthor::deleteAll(['book_id' => $this->id]);
+        if ($deleteResult === false) {
+            throw new \Exception('Failed to delete existing author links for book ID: ' . $this->id);
+        }
         
         foreach ($authorIds as $authorId) {
             $bookAuthor = new BookAuthor();
             $bookAuthor->book_id = $this->id;
             $bookAuthor->author_id = $authorId;
-            $bookAuthor->save();
+            if (! $bookAuthor->save()) {
+                throw new \Exception('Failed to save author link: book_id=' . $this->id . ', author_id=' . $authorId);
+            }
         }
     }
     
