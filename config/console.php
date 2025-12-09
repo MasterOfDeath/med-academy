@@ -61,7 +61,9 @@ $config = [
             \Psr\Http\Client\ClientInterface::class => [
                 'class' => \GuzzleHttp\Client::class,
             ],
-            \yii\queue\Queue::class => \yii\di\Instance::of('queue'),
+            \yii\queue\Queue::class => function () {
+                return \Yii::$app->get('queue');
+            },
         ],
     ],
     'params' => $params,

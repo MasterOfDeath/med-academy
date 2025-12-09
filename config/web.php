@@ -6,7 +6,7 @@ $db = require __DIR__ . '/db.php';
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log', 'queue'],
+    'bootstrap' => ['log'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm' => '@vendor/npm-asset',
@@ -71,7 +71,9 @@ $config = [
             \Psr\Http\Client\ClientInterface::class => [
                 'class' => \GuzzleHttp\Client::class,
             ],
-            \yii\queue\Queue::class => \yii\di\Instance::of('queue'),
+            \yii\queue\Queue::class => function () {
+                return \Yii::$app->get('queue');
+            },
         ],
     ],
     'params' => $params,
