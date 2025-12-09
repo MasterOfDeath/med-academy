@@ -40,9 +40,13 @@ $config = [
             'port' => $params['redis_port'],
             'database' => 0,
         ],
-        'smsClient' => [
-            'class' => 'app\components\SmsClient',
-            'apiKey' => $params['smspilot_api_key'],
+    ],
+    'container' => [
+        'definitions' => [
+            'app\interfaces\SmsClientInterface' => [
+                'class' => 'app\components\SmsClient',
+                'apiKey' => $params['smspilot_api_key'] ?? '',
+            ],
         ],
     ],
     'params' => $params,

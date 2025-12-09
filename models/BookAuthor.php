@@ -15,6 +15,7 @@ use Yii;
  */
 class BookAuthor extends \yii\db\ActiveRecord
 {
+    private const REPORT_CACHE_TAG = 'report-top-authors';
 
 
     /**
@@ -70,4 +71,30 @@ class BookAuthor extends \yii\db\ActiveRecord
         return $this->hasOne(Book::class, ['id' => 'book_id']);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        
+        $this->invalidateReportCache();
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        
+        $this->invalidateReportCache();
+    }
+
+    private function invalidateReportCache(): void
+    {
+        if (isset(\Yii::$app)) {
+            \yii\caching\TagDependency::invalidate(\Yii::$app->cache, self::REPORT_CACHE_TAG);
+        }
+    }
 }

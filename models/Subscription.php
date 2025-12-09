@@ -15,8 +15,6 @@ use Yii;
  */
 class Subscription extends \yii\db\ActiveRecord
 {
-
-
     /**
      * {@inheritdoc}
      */
@@ -60,5 +58,4 @@ class Subscription extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Author::class, ['id' => 'author_id']);
     }
-
 }

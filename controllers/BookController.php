@@ -3,7 +3,7 @@
 namespace app\controllers;
 
 use app\models\Book;
-use app\jobs\SendSmsJob;
+use app\factories\SendSmsJobFactory;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -16,6 +16,16 @@ use yii\web\UploadedFile;
  */
 class BookController extends Controller
 {
+    public function __construct(
+        $id,
+        $module,
+        private SendSmsJobFactory $smsJobFactory,
+        $config = [],
+    ) {
+        $this->smsJobFactory = $smsJobFactory;
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * @inheritDoc
      */
@@ -114,9 +124,10 @@ class BookController extends Controller
                         }
                         
                         // Добавляем задачу в очередь на отправку SMS
-                        \Yii::$app->queue->push(new SendSmsJob([
+                        $job = $this->smsJobFactory->create([
                             'bookId' => $model->id
-                        ]));
+                        ]);
+                        \Yii::$app->queue->push($job);
 
                         return $this->redirect(['view', 'id' => $model->id]);
                     }
@@ -164,9 +175,10 @@ class BookController extends Controller
                     
                     if ($authorsChanged) {
                         // Добавляем задачу в очередь на отправку SMS
-                        \Yii::$app->queue->push(new SendSmsJob([
+                        $job = $this->smsJobFactory->create([
                             'bookId' => $model->id
-                        ]));
+                        ]);
+                        \Yii::$app->queue->push($job);
                     }
 
                     return $this->redirect(['view', 'id' => $model->id]);

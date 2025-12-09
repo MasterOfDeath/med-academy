@@ -11,8 +11,8 @@ use app\interfaces\SmsClientInterface;
 
 class SendSmsJob extends BaseObject implements JobInterface
 {
-    public $bookId;
-    public $message;
+    private $bookId;
+    private $message;
     
     private ?SmsClientInterface $smsClient = null;
 
@@ -23,6 +23,8 @@ class SendSmsJob extends BaseObject implements JobInterface
 
     public function execute($queue)
     {
+        \Yii::info("Starting SMS sending job for book ID: {$this->bookId}", 'sms');
+        
         // Получаем книгу и автора
         $book = Book::findOne($this->bookId);
         if (!$book) {
@@ -48,18 +50,23 @@ class SendSmsJob extends BaseObject implements JobInterface
         // Отправляем SMS каждому подписчику
         foreach ($subscriptions as $subscription) {
             try {
-                $this->getSmsClient()->sendSms($subscription->phone, $this->message);
+                $this->smsClient->sendSms($subscription->phone, $this->message);
+                \Yii::info("SMS sent successfully to {$subscription->phone}", 'sms');
             } catch (\app\exceptions\SmsClientException $e) {
                 \Yii::error("Failed to send SMS to {$subscription->phone}: {$e->getMessage()}", 'sms');
             }
         }
+        
+        \Yii::info("SMS sending job completed for book ID: {$this->bookId}", 'sms');
     }
-    
-    private function getSmsClient(): SmsClientInterface
+
+    public function setSmsClient(SmsClientInterface $smsClient): void
     {
-        if ($this->smsClient === null) {
-            $this->smsClient = \Yii::$app->get('smsClient');
-        }
-        return $this->smsClient;
+        $this->smsClient = $smsClient;
+    }
+
+    public function setBookId($bookId): void
+    {
+        $this->bookId = $bookId;
     }
 }

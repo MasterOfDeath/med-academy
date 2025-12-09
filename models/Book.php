@@ -20,6 +20,8 @@ use yii\web\UploadedFile;
  */
 class Book extends \yii\db\ActiveRecord
 {
+    private const REPORT_CACHE_TAG = 'report-top-authors';
+
     /**
      * @var UploadedFile
      */
@@ -86,15 +88,12 @@ class Book extends \yii\db\ActiveRecord
     }
     
     /**
-     * Сохраняет связь между книгой и авторами
      * @param array $authorIds IDs авторов
      */
     public function linkAuthors($authorIds)
     {
-        // Удаляем старые связи
         BookAuthor::deleteAll(['book_id' => $this->id]);
         
-        // Создаем новые связи
         foreach ($authorIds as $authorId) {
             $bookAuthor = new BookAuthor();
             $bookAuthor->book_id = $this->id;
@@ -104,7 +103,6 @@ class Book extends \yii\db\ActiveRecord
     }
     
     /**
-     * Возвращает IDs всех авторов книги
      * @return array
      */
     public function getAuthorIds()
@@ -118,29 +116,51 @@ class Book extends \yii\db\ActiveRecord
     public function uploadCoverImage()
     {
         if ($this->cover_image_file !== null) {
-            // Генерируем уникальное имя файла
             $filename = 'book_' . $this->id . '_' . time() . '.' . $this->cover_image_file->extension;
             
-            // Создаем директорию, если она не существует
             $uploadDir = Yii::getAlias('@webroot/uploads');
             if (!file_exists($uploadDir)) {
                 mkdir($uploadDir, 0775, true);
             }
             
-            // Сохраняем файл
             $this->cover_image_file->saveAs($uploadDir . '/' . $filename);
             
-            // Удаляем старый файл, если он существует
             if ($this->cover_image && file_exists($uploadDir . '/' . $this->cover_image)) {
                 unlink($uploadDir . '/' . $this->cover_image);
             }
             
-            // Обновляем поле cover_image в модели
             $this->cover_image = $filename;
             
             return true;
         }
         
         return false;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        
+        $this->invalidateReportCache();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        
+        $this->invalidateReportCache();
+    }
+
+    private function invalidateReportCache(): void
+    {
+        if (isset(\Yii::$app)) {
+            \yii\caching\TagDependency::invalidate(\Yii::$app->cache, self::REPORT_CACHE_TAG);
+        }
     }
 }

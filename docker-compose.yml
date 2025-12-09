@@ -11,12 +11,15 @@ services:
       - db
       - redis
     environment:
-      - YII_ENV=dev
+      - YII_ENV=${YII_ENV}
       - DB_HOST=${DB_HOST}
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
       - PHP_USER_ID=${PHP_USER_ID}
+      - SMS_PILOT_API_KEY=${SMS_PILOT_API_KEY}
 
   db:
     image: mysql:8.0
@@ -45,10 +48,13 @@ services:
       - db
       - redis
     environment:
-      - YII_ENV=dev
+      - YII_ENV=${YII_ENV}
       - DB_HOST=${DB_HOST}
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
       - PHP_USER_ID=${PHP_USER_ID}
-    command: php yii queue/listen 3 --verbose=1
+      - SMS_PILOT_API_KEY=${SMS_PILOT_API_KEY}
+    command: php yii queue/listen --verbose 1

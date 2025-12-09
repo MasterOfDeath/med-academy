@@ -4,15 +4,21 @@ namespace app\components;
 
 use app\interfaces\SmsClientInterface;
 use app\exceptions\SmsClientException;
+use yii\base\BaseObject;
 use Yii;
+use yii\base\InvalidConfigException;
 
-class SmsClient implements SmsClientInterface
+class SmsClient extends BaseObject implements SmsClientInterface
 {
-    private string $apiKey;
+    public string $apiKey;
 
-    public function __construct(string $apiKey)
+    public function init()
     {
-        $this->apiKey = $apiKey;
+        parent::init();
+
+        if (empty($this->apiKey)) {
+            throw new InvalidConfigException('apiKey is required');
+        }
     }
 
     public function sendSms(string $phone, string $message): void
