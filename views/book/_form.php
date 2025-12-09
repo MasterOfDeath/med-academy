@@ -7,7 +7,6 @@ use yii\widgets\ActiveForm;
 /** @var app\models\Book $model */
 /** @var yii\widgets\ActiveForm $form */
 /** @var array $authorsList */
-/** @var array $selectedAuthorIds */
 ?>
 
 <div class="book-form">
@@ -22,14 +21,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'isbn')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'cover_image')->textInput(['maxlength' => true]) ?>
-
     <?= $form->field($model, 'cover_image_file')->fileInput() ?>
 
     <?= $form->field($model, 'author_ids')->dropDownList($authorsList, [
     'multiple' => true,
     'size' => 10,
-    'options' => array_combine($selectedAuthorIds, array_fill(0, count($selectedAuthorIds), ['selected' => true])),
 ])->label('Authors') ?>
 
     <div class="form-group">
