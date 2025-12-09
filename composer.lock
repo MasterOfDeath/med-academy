@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e5b15fbbdab2b9b855d89b110941c3db",
+    "content-hash": "64adec205b1fec87ff5a90c1b8274939",
     "packages": [
         {
             "name": "bower-asset/inputmask",
@@ -7537,6 +7537,70 @@
                 }
             ],
             "time": "2025-12-08T11:19:18+00:00"
+        },
+        {
+            "name": "yii2-extensions/phpstan",
+            "version": "0.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yii2-extensions/phpstan.git",
+                "reference": "3cc2419f6776088571a7e018fb73a75b58fc35aa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yii2-extensions/phpstan/zipball/3cc2419f6776088571a7e018fb73a75b58fc35aa",
+                "reference": "3cc2419f6776088571a7e018fb73a75b58fc35aa",
+                "shasum": ""
+            },
+            "require": {
+                "nikic/php-parser": "^4.1|^5.4.0",
+                "php": ">=8.1",
+                "phpstan/phpstan": "^2.1",
+                "yiisoft/yii2": "^2.0.53|^22"
+            },
+            "require-dev": {
+                "maglnet/composer-require-checker": "^4.7",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpstan/phpstan-strict-rules": "^2.0.3",
+                "phpunit/phpunit": "^10.2",
+                "symplify/easy-coding-standard": "^12.1"
+            },
+            "type": "library",
+            "extra": {
+                "phpstan": {
+                    "includes": [
+                        "extension.neon"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-main": "0.3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "yii2\\extensions\\phpstan\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "PHPStan extension for Yii2",
+            "keywords": [
+                "PHPStan",
+                "yii2"
+            ],
+            "support": {
+                "issues": "https://github.com/yii2-extensions/phpstan/issues",
+                "source": "https://github.com/yii2-extensions/phpstan/tree/0.3.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/terabytesoftw",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-08-16T14:57:16+00:00"
         },
         {
             "name": "yiisoft/yii2-debug",

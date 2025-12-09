@@ -1,5 +1,10 @@
+includes:
+    - vendor/yii2-extensions/phpstan/extension.neon
+
 parameters:
     level: 5
+    bootstrapFiles:
+        - vendor/yiisoft/yii2/Yii.php
     paths:
         - controllers/
         - models/
@@ -10,7 +15,7 @@ parameters:
         - repositories/
         - interfaces/
         - exceptions/
-        - commands/
+        - services/
     excludePaths:
         - tests/*
         - runtime/*
@@ -18,7 +23,5 @@ parameters:
         - views/*
         - web/*
         - assets/*
-    checkMissingIterableValueType: false
     reportMagicMethods: true
     reportMagicProperties: true
-    reportPossiblyUnusedCode: false
