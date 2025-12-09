@@ -95,8 +95,12 @@ class AuthorController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        $subscriptionModel = new \app\models\Subscription();
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'subscriptionModel' => $subscriptionModel,
         ]);
     }
 

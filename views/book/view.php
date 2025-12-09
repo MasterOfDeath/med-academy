@@ -5,6 +5,7 @@ use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
 /** @var app\models\Book $model */
+/** @var string $authorsString */
 
 $this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => 'Books', 'url' => ['index']];
@@ -35,6 +36,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'description:ntext',
             'isbn',
             'cover_image',
+            [
+                'attribute' => 'authors',
+                'value' => $authorsString,
+            ],
         ],
     ]) ?>
     

@@ -1,13 +1,13 @@
 <?php
 
-use app\models\Author;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var app\models\Book $model */
 /** @var yii\widgets\ActiveForm $form */
+/** @var array $authorsList */
+/** @var array $selectedAuthorIds */
 ?>
 
 <div class="book-form">
@@ -26,17 +26,10 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'cover_image_file')->fileInput() ?>
 
-    <?php
-    // Получаем список всех авторов для выпадающего списка
-    $authors = ArrayHelper::map(Author::find()->all(), 'id', 'full_name');
-// Получаем текущие ID авторов для этой книги (при редактировании)
-$selectedAuthors = $model->isNewRecord ? [] : $model->getAuthorIds();
-?>
-    
-    <?= $form->field($model, 'author_ids')->dropDownList($authors, [
+    <?= $form->field($model, 'author_ids')->dropDownList($authorsList, [
     'multiple' => true,
     'size' => 10,
-    'options' => array_combine($selectedAuthors, array_fill(0, count($selectedAuthors), ['selected' => true])),
+    'options' => array_combine($selectedAuthorIds, array_fill(0, count($selectedAuthorIds), ['selected' => true])),
 ])->label('Authors') ?>
 
     <div class="form-group">

@@ -95,8 +95,15 @@ class BookController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        $authorNames = [];
+        foreach ($model->authors as $author) {
+            $authorNames[] = $author->full_name;
+        }
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'authorsString' => implode(', ', $authorNames),
         ]);
     }
 
@@ -110,6 +117,9 @@ class BookController extends Controller
     {
         $model = new Book();
 
+        $authorsList = \yii\helpers\ArrayHelper::map(\app\models\Author::find()->all(), 'id', 'full_name');
+        $selectedAuthorIds = [];
+
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $model->cover_image_file = UploadedFile::getInstance($model, 'cover_image_file');
@@ -121,12 +131,16 @@ class BookController extends Controller
                     }
                 }
             }
+
+            $selectedAuthorIds = \Yii::$app->request->post('Book')['author_ids'] ?? [];
         } else {
             $model->loadDefaultValues();
         }
 
         return $this->render('create', [
             'model' => $model,
+            'authorsList' => $authorsList,
+            'selectedAuthorIds' => $selectedAuthorIds,
         ]);
     }
 
@@ -144,6 +158,9 @@ class BookController extends Controller
     {
         $model = $this->findModel($id);
 
+        $authorsList = \yii\helpers\ArrayHelper::map(\app\models\Author::find()->all(), 'id', 'full_name');
+        $selectedAuthorIds = $model->isNewRecord ? [] : $model->getAuthorIds();
+
         if ($this->request->isPost && $model->load($this->request->post())) {
             $model->cover_image_file = UploadedFile::getInstance($model, 'cover_image_file');
 
@@ -153,10 +170,14 @@ class BookController extends Controller
                     return $this->redirect(['view', 'id' => $model->id]);
                 }
             }
+
+            $selectedAuthorIds = \Yii::$app->request->post('Book')['author_ids'] ?? $model->getAuthorIds();
         }
 
         return $this->render('update', [
             'model' => $model,
+            'authorsList' => $authorsList,
+            'selectedAuthorIds' => $selectedAuthorIds,
         ]);
     }
 

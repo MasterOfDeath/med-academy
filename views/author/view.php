@@ -6,6 +6,7 @@ use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
 /** @var app\models\Author $model */
+/** @var app\models\Subscription $subscriptionModel */
 
 $this->title = $model->full_name;
 $this->params['breadcrumbs'][] = ['label' => 'Authors', 'url' => ['index']];
@@ -37,7 +38,6 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
 
-    <!-- Отображаем сообщения -->
     <?php if (Yii::$app->session->hasFlash('success')): ?>
         <div class="alert alert-success">
             <?= Yii::$app->session->getFlash('success') ?>
@@ -50,14 +50,11 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     <?php endif; ?>
 
-    <!-- Добавляем секцию для подписки -->
     <div class="subscription-form mt-5">
         <h3>Subscribe to new books</h3>
         <p>Leave your phone number to receive SMS notifications when new books by this author are added:</p>
         
-        <?php
-        $subscriptionModel = new \app\models\Subscription();
-$form = ActiveForm::begin([
+        <?php $form = ActiveForm::begin([
     'action' => ['author/subscribe', 'id' => $model->id],
     'method' => 'post',
 ]); ?>
@@ -71,7 +68,6 @@ $form = ActiveForm::begin([
         <?php ActiveForm::end(); ?>
     </div>
 
-    <!-- Отображаем список книг автора -->
     <div class="author-books mt-5">
         <h3>Books by this author</h3>
         <?php if ($model->books): ?>
