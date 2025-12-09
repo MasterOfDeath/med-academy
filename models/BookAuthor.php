@@ -5,10 +5,10 @@ namespace app\models;
 /**
  * This is the model class for table "book_authors".
  *
- * @property int     $book_id
- * @property int     $author_id
- * @property Authors $author
- * @property Books   $book
+ * @property int    $book_id
+ * @property int    $author_id
+ * @property Author $author
+ * @property Book   $book
  */
 class BookAuthor extends \yii\db\ActiveRecord
 {
@@ -89,8 +89,6 @@ class BookAuthor extends \yii\db\ActiveRecord
 
     private function invalidateReportCache(): void
     {
-        if (isset(\Yii::$app)) {
-            \yii\caching\TagDependency::invalidate(\Yii::$app->cache, self::REPORT_CACHE_TAG);
-        }
+        \yii\caching\TagDependency::invalidate(\Yii::$app->cache, self::REPORT_CACHE_TAG);
     }
 }

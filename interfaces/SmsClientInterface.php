@@ -2,6 +2,8 @@
 
 namespace app\interfaces;
 
+use app\exceptions\SmsClientException;
+
 interface SmsClientInterface
 {
     /**

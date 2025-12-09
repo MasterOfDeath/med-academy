@@ -5,10 +5,10 @@ namespace app\models;
 /**
  * This is the model class for table "subscriptions".
  *
- * @property int     $id
- * @property int     $author_id
- * @property string  $phone
- * @property Authors $author
+ * @property int    $id
+ * @property int    $author_id
+ * @property string $phone
+ * @property Author $author
  */
 class Subscription extends \yii\db\ActiveRecord
 {

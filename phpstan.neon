@@ -25,3 +25,4 @@ parameters:
         - assets/*
     reportMagicMethods: true
     reportMagicProperties: true
+    treatPhpDocTypesAsCertain: false

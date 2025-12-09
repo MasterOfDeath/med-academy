@@ -11,16 +11,16 @@ use yii\web\IdentityInterface;
 /**
  * User model
  *
- * @property int    $id
- * @property string $username
- * @property string $password_hash
- * @property string $password_reset_token
- * @property string $email
- * @property string $auth_key
- * @property int    $status
- * @property int    $created_at
- * @property int    $updated_at
- * @property string $password             write-only password
+ * @property int         $id
+ * @property string      $username
+ * @property string      $password_hash
+ * @property string|null $password_reset_token
+ * @property string      $email
+ * @property string      $auth_key
+ * @property int         $status
+ * @property int         $created_at
+ * @property int         $updated_at
+ * @property string      $password             write-only password
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -84,9 +84,9 @@ class User extends ActiveRecord implements IdentityInterface
      *
      * @param string $username
      *
-     * @return static|null
+     * @return self|null
      */
-    public static function findByUsername($username)
+    public static function findByUsername($username): ?self
     {
         return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
     }
@@ -96,9 +96,9 @@ class User extends ActiveRecord implements IdentityInterface
      *
      * @param string $token password reset token
      *
-     * @return static|null
+     * @return self|null
      */
-    public static function findByPasswordResetToken($token)
+    public static function findByPasswordResetToken($token): ?self
     {
         if (!static::isPasswordResetTokenValid($token)) {
             return null;

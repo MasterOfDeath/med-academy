@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use Yii;
 use yii\web\UploadedFile;
 
 /**
@@ -87,57 +86,11 @@ class Book extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param array $authorIds IDs авторов
-     *
-     * @throws \Exception
-     */
-    public function linkAuthors($authorIds)
-    {
-        $deleteResult = BookAuthor::deleteAll(['book_id' => $this->id]);
-        if ($deleteResult === false) {
-            throw new \Exception('Failed to delete existing author links for book ID: ' . $this->id);
-        }
-
-        foreach ($authorIds as $authorId) {
-            $bookAuthor = new BookAuthor();
-            $bookAuthor->book_id = $this->id;
-            $bookAuthor->author_id = $authorId;
-            if (!$bookAuthor->save()) {
-                throw new \Exception('Failed to save author link: book_id=' . $this->id . ', author_id=' . $authorId);
-            }
-        }
-    }
-
-    /**
      * @return array
      */
     public function getAuthorIds()
     {
         return $this->getAuthors()->select('id')->column();
-    }
-
-    public function uploadCoverImage()
-    {
-        if ($this->cover_image_file !== null) {
-            $filename = 'book_' . $this->id . '_' . time() . '.' . $this->cover_image_file->extension;
-
-            $uploadDir = Yii::getAlias('@webroot/uploads');
-            if (!file_exists($uploadDir)) {
-                mkdir($uploadDir, 0775, true);
-            }
-
-            $this->cover_image_file->saveAs($uploadDir . '/' . $filename);
-
-            if ($this->cover_image && file_exists($uploadDir . '/' . $this->cover_image)) {
-                unlink($uploadDir . '/' . $this->cover_image);
-            }
-
-            $this->cover_image = $filename;
-
-            return $this->save(false, ['cover_image']);
-        }
-
-        return false;
     }
 
     /**
@@ -162,8 +115,6 @@ class Book extends \yii\db\ActiveRecord
 
     private function invalidateReportCache(): void
     {
-        if (isset(\Yii::$app)) {
-            \yii\caching\TagDependency::invalidate(\Yii::$app->cache, self::REPORT_CACHE_TAG);
-        }
+        \yii\caching\TagDependency::invalidate(\Yii::$app->cache, self::REPORT_CACHE_TAG);
     }
 }

@@ -5,11 +5,11 @@ namespace app\models;
 /**
  * This is the model class for table "authors".
  *
- * @property int             $id
- * @property string          $full_name
- * @property BookAuthors[]   $bookAuthors
- * @property Books[]         $books
- * @property Subscriptions[] $subscriptions
+ * @property int            $id
+ * @property string         $full_name
+ * @property BookAuthor[]   $bookAuthors
+ * @property Book[]         $books
+ * @property Subscription[] $subscriptions
  */
 class Author extends \yii\db\ActiveRecord
 {

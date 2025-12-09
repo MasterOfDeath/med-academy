@@ -124,10 +124,7 @@ class BookService
      */
     private function linkAuthors(Book $model, array $authorIds): void
     {
-        $deleteResult = BookAuthor::deleteAll(['book_id' => $model->id]);
-        if ($deleteResult === false) {
-            throw new \Exception('Failed to delete existing author links for book ID: ' . $model->id);
-        }
+        BookAuthor::deleteAll(['book_id' => $model->id]);
 
         foreach ($authorIds as $authorId) {
             $bookAuthor = new BookAuthor();
