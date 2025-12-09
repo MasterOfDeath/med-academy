@@ -1,0 +1,15 @@
+.docker
+.git
+.gitignore
+README.md
+LICENSE.md
+.dockerignore
+*.log
+runtime/*
+!runtime/.gitignore
+assets/*
+!assets/.gitignore
+tests/
+.php-cs-fixer.dist.php
+phpstan.neon
+.codeception/
