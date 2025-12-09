@@ -1,10 +1,14 @@
 <?php
 
+// Load environment variables from .env file
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv->load();
+
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=yii2basic',
-    'username' => 'root',
-    'password' => '',
+    'dsn' => 'mysql:host=' . ($_ENV['DB_HOST'] ?? 'localhost') . ';dbname=' . ($_ENV['DB_NAME'] ?? 'yii2basic'),
+    'username' => $_ENV['DB_USER'] ?? 'root',
+    'password' => $_ENV['DB_PASSWORD'] ?? '',
     'charset' => 'utf8',
 
     // Schema cache options (for production environment)

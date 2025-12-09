@@ -42,6 +42,17 @@ $config = [
             ],
         ],
         'db' => $db,
+        'queue' => [
+            'class' => \yii\queue\redis\Queue::class,
+            'redis' => 'redis',
+            'channel' => 'default',
+        ],
+        'redis' => [
+            'class' => 'yii\redis\Connection',
+            'hostname' => $_ENV['REDIS_HOST'] ?? 'redis',
+            'port' => $_ENV['REDIS_PORT'] ?? 6379,
+            'database' => 0,
+        ],
         /*
         'urlManager' => [
             'enablePrettyUrl' => true,
