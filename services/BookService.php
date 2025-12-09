@@ -49,10 +49,6 @@ class BookService
 
                 return false;
             }
-        } catch (\Exception $e) {
-            $transaction->rollback();
-
-            throw $e;
         } catch (\Throwable $e) {
             $transaction->rollback();
 
@@ -89,10 +85,6 @@ class BookService
 
                 return false;
             }
-        } catch (\Exception $e) {
-            $transaction->rollback();
-
-            throw $e;
         } catch (\Throwable $e) {
             $transaction->rollback();
 

@@ -21,7 +21,6 @@ class BookController extends Controller
         private \app\services\BookService $bookService,
         $config = [],
     ) {
-        $this->bookService = $bookService;
         parent::__construct($id, $module, $config);
     }
 

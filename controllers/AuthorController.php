@@ -20,7 +20,6 @@ class AuthorController extends Controller
         private \app\services\SubscriptionService $subscriptionService,
         $config = [],
     ) {
-        $this->subscriptionService = $subscriptionService;
         parent::__construct($id, $module, $config);
     }
 
