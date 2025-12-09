@@ -26,6 +26,9 @@ $config = [
             ],
         ],
         'db' => $db,
+        'formatter' => [
+            'class' => 'yii\i18n\Formatter',
+        ],
         'queue' => [
             'class' => \yii\queue\redis\Queue::class,
             'redis' => 'redis',
@@ -39,13 +42,15 @@ $config = [
         ],
     ],
     'params' => $params,
-    /*
     'controllerMap' => [
+        'migrate' => [
+            'class' => 'yii\console\controllers\MigrateController',
+            'db' => $db,
+        ],
         'fixture' => [ // Fixture generation command line.
             'class' => 'yii\faker\FixtureController',
         ],
     ],
-    */
 ];
 
 if (YII_ENV_DEV) {

@@ -29,18 +29,18 @@ class BookController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'actions' => ['index', 'view'], // Гости могут просматривать
-                            'roles' => ['?'], // Для анонимных пользователей
+                            'actions' => ['index', 'view'],
+                            'roles' => ['?', '@'],
                         ],
                         [
                             'allow' => true,
-                            'actions' => ['create', 'update', 'delete'], // Авторизованные могут CRUD
-                            'roles' => ['@'], // Для авторизованных пользователей
+                            'actions' => ['create', 'update', 'delete'],
+                            'roles' => ['@'],
                         ],
                     ],
                 ],
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
                     ],
