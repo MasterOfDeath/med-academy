@@ -2,21 +2,17 @@
 
 namespace app\services;
 
+use app\exceptions\SubscriptionException;
 use app\models\Author;
 use app\models\Subscription;
-use yii\helpers\Html;
 
 class SubscriptionService
 {
-    public function subscribeToAuthor(int $authorId, string $phone): array
+    public function subscribeToAuthor(int $authorId, string $phone): void
     {
         $author = Author::findOne($authorId);
         if (!$author) {
-            return [
-                'success' => false,
-                'message' => 'Author not found.',
-                'type' => 'error',
-            ];
+            throw new SubscriptionException('Author not found.');
         }
 
         $existingSubscription = Subscription::find()
@@ -24,29 +20,15 @@ class SubscriptionService
             ->one();
 
         if ($existingSubscription) {
-            return [
-                'success' => false,
-                'message' => 'You are already subscribed to this author with this phone number.',
-                'type' => 'error',
-            ];
-        } else {
-            $subscription = new Subscription();
-            $subscription->author_id = $authorId;
-            $subscription->phone = $phone;
+            throw new SubscriptionException('You are already subscribed to this author with this phone number.');
+        }
 
-            if ($subscription->validate() && $subscription->save()) {
-                return [
-                    'success' => true,
-                    'message' => 'You have successfully subscribed to new books by ' . Html::encode($author->full_name),
-                    'type' => 'success',
-                ];
-            } else {
-                return [
-                    'success' => false,
-                    'message' => 'Error occurred while subscribing. Please check your phone number.',
-                    'type' => 'error',
-                ];
-            }
+        $subscription = new Subscription();
+        $subscription->author_id = $authorId;
+        $subscription->phone = $phone;
+
+        if (!$subscription->validate() || !$subscription->save()) {
+            throw new SubscriptionException('Error occurred while subscribing. Please check your phone number.');
         }
     }
 }

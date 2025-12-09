@@ -2,10 +2,12 @@
 
 namespace app\controllers;
 
+use app\exceptions\SubscriptionException;
 use app\models\Author;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -201,9 +203,12 @@ class AuthorController extends Controller
         if ($this->request->isPost) {
             $phone = $this->request->post('Subscription')['phone'];
 
-            $result = $this->subscriptionService->subscribeToAuthor($author->id, $phone);
-
-            \Yii::$app->session->setFlash($result['type'], $result['message']);
+            try {
+                $this->subscriptionService->subscribeToAuthor($author->id, $phone);
+                \Yii::$app->session->setFlash('success', 'You have successfully subscribed to new books by ' . Html::encode($author->full_name));
+            } catch (SubscriptionException $e) {
+                \Yii::$app->session->setFlash('error', $e->getMessage());
+            }
         }
 
         return $this->redirect(['view', 'id' => $author->id]);

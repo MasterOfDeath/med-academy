@@ -4,6 +4,6 @@ namespace app\exceptions;
 
 use yii\base\Exception;
 
-class SmsClientException extends Exception
+class SubscriptionException extends Exception
 {
 }
