@@ -7,6 +7,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * AuthorController implements the CRUD actions for Author model.
@@ -21,6 +22,21 @@ class AuthorController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'actions' => ['index', 'view'], // Гости могут просматривать
+                            'roles' => ['?'], // Для анонимных пользователей
+                        ],
+                        [
+                            'allow' => true,
+                            'actions' => ['create', 'update', 'delete'], // Авторизованные могут CRUD
+                            'roles' => ['@'], // Для авторизованных пользователей
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [

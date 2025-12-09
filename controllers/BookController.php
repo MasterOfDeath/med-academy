@@ -3,10 +3,13 @@
 namespace app\controllers;
 
 use app\models\Book;
+use app\jobs\SendSmsJob;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use yii\web\UploadedFile;
 
 /**
  * BookController implements the CRUD actions for Book model.
@@ -21,6 +24,21 @@ class BookController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'actions' => ['index', 'view'], // Гости могут просматривать
+                            'roles' => ['?'], // Для анонимных пользователей
+                        ],
+                        [
+                            'allow' => true,
+                            'actions' => ['create', 'update', 'delete'], // Авторизованные могут CRUD
+                            'roles' => ['@'], // Для авторизованных пользователей
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -80,8 +98,29 @@ class BookController extends Controller
         $model = new Book();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+                // Загружаем файл обложки
+                $model->cover_image_file = UploadedFile::getInstance($model, 'cover_image_file');
+                
+                if ($model->validate()) {
+                    if ($model->save()) {
+                        // Сохраняем файл обложки
+                        $model->uploadCoverImage();
+                        
+                        // Сохраняем связи с авторами
+                        $authorIds = \Yii::$app->request->post('Book')['author_ids'];
+                        if (!empty($authorIds)) {
+                            $model->linkAuthors($authorIds);
+                        }
+                        
+                        // Добавляем задачу в очередь на отправку SMS
+                        \Yii::$app->queue->push(new SendSmsJob([
+                            'bookId' => $model->id
+                        ]));
+
+                        return $this->redirect(['view', 'id' => $model->id]);
+                    }
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -103,8 +142,36 @@ class BookController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            // Загружаем файл обложки
+            $model->cover_image_file = UploadedFile::getInstance($model, 'cover_image_file');
+            
+            $oldAuthorIds = $model->getAuthorIds();
+            if ($model->validate()) {
+                if ($model->save()) {
+                    // Сохраняем файл обложки
+                    $model->uploadCoverImage();
+                    
+                    // Сохраняем связи с авторами
+                    $authorIds = \Yii::$app->request->post('Book')['author_ids'];
+                    if (!empty($authorIds)) {
+                        $model->linkAuthors($authorIds);
+                    }
+                    
+                    // Проверяем, изменились ли авторы, и если да, то отправляем уведомления
+                    $newAuthorIds = $model->getAuthorIds();
+                    $authorsChanged = array_diff($oldAuthorIds, $newAuthorIds) || array_diff($newAuthorIds, $oldAuthorIds);
+                    
+                    if ($authorsChanged) {
+                        // Добавляем задачу в очередь на отправку SMS
+                        \Yii::$app->queue->push(new SendSmsJob([
+                            'bookId' => $model->id
+                        ]));
+                    }
+
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
+            }
         }
 
         return $this->render('update', [

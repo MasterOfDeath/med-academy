@@ -31,7 +31,20 @@ $this->params['breadcrumbs'][] = $this->title;
             'year',
             'description:ntext',
             'isbn',
-            //'cover_image',
+            [
+                'attribute' => 'cover_image',
+                'format' => 'html',
+                'value' => function ($model) {
+                    if ($model->cover_image) {
+                        return Html::img(Yii::getAlias('@web/uploads/' . $model->cover_image), [
+                            'alt' => 'Cover Image',
+                            'style' => 'width: 50px; height: auto;'
+                        ]);
+                    } else {
+                        return 'No Image';
+                    }
+                }
+            ],
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Book $model, $key, $index, $column) {

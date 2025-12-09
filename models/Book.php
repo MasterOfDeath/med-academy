@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "books".
@@ -19,6 +20,11 @@ use Yii;
  */
 class Book extends \yii\db\ActiveRecord
 {
+    /**
+     * @var UploadedFile
+     */
+    public $cover_image_file;
+    public $author_ids = [];
     /**
      * {@inheritdoc}
      */
@@ -38,6 +44,8 @@ class Book extends \yii\db\ActiveRecord
             [['year'], 'integer'],
             [['description'], 'string'],
             [['title', 'isbn', 'cover_image'], 'string', 'max' => 255],
+            [['author_ids'], 'safe'],
+            [['cover_image_file'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, gif', 'maxSize' => 1024*1024], // Максимальный размер 1MB
         ];
     }
 
@@ -53,6 +61,7 @@ class Book extends \yii\db\ActiveRecord
             'description' => 'Description',
             'isbn' => 'Isbn',
             'cover_image' => 'Cover Image',
+            'author_ids' => 'Authors',
         ];
     }
 
@@ -101,5 +110,37 @@ class Book extends \yii\db\ActiveRecord
     public function getAuthorIds()
     {
         return $this->getAuthors()->select('id')->column();
+    }
+    
+    /**
+     * Загружает файл обложки
+     */
+    public function uploadCoverImage()
+    {
+        if ($this->cover_image_file !== null) {
+            // Генерируем уникальное имя файла
+            $filename = 'book_' . $this->id . '_' . time() . '.' . $this->cover_image_file->extension;
+            
+            // Создаем директорию, если она не существует
+            $uploadDir = Yii::getAlias('@webroot/uploads');
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0775, true);
+            }
+            
+            // Сохраняем файл
+            $this->cover_image_file->saveAs($uploadDir . '/' . $filename);
+            
+            // Удаляем старый файл, если он существует
+            if ($this->cover_image && file_exists($uploadDir . '/' . $this->cover_image)) {
+                unlink($uploadDir . '/' . $this->cover_image);
+            }
+            
+            // Обновляем поле cover_image в модели
+            $this->cover_image = $filename;
+            
+            return true;
+        }
+        
+        return false;
     }
 }

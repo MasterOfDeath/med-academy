@@ -37,5 +37,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'cover_image',
         ],
     ]) ?>
+    
+    <?php if ($model->cover_image): ?>
+        <div class="cover-image-container">
+            <h3>Cover Image:</h3>
+            <img src="<?= Yii::getAlias('@web/uploads/' . $model->cover_image) ?>" alt="Cover Image" style="max-width: 300px; height: auto;">
+        </div>
+    <?php endif; ?>
 
 </div>
