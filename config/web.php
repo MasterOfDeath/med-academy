@@ -17,7 +17,7 @@ $config = [
         ],
         'cache' => [
             'class' => \yii\redis\Cache::class,
-            'redis' => 'redis', 
+            'redis' => 'redis',
         ],
         'user' => [
             'identityClass' => 'app\models\User',

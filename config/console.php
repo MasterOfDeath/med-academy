@@ -16,7 +16,7 @@ $config = [
     'components' => [
         'cache' => [
             'class' => \yii\redis\Cache::class,
-            'redis' => 'redis', 
+            'redis' => 'redis',
         ],
         'log' => [
             'targets' => [
