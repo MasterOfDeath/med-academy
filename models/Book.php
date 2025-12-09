@@ -41,7 +41,7 @@ class Book extends \yii\db\ActiveRecord
     {
         return [
             [['year', 'description', 'isbn', 'cover_image'], 'default', 'value' => null],
-            [['title'], 'required'],
+            [['title', 'author_ids'], 'required'],
             [['year'], 'integer'],
             [['description'], 'string'],
             [['title', 'isbn', 'cover_image'], 'string', 'max' => 255],
