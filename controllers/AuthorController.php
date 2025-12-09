@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\helpers\Html;
 
 /**
  * AuthorController implements the CRUD actions for Author model.
@@ -27,7 +28,7 @@ class AuthorController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'actions' => ['index', 'view'],
+                            'actions' => ['index', 'view', 'subscribe'],
                             'roles' => ['?', '@'],
                         ],
                         [
@@ -41,6 +42,7 @@ class AuthorController extends Controller
                     'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
+                        'subscribe' => ['POST'],
                     ],
                 ],
             ]
@@ -156,5 +158,39 @@ class AuthorController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    
+    /**
+     * Subscribe to new books by author
+     * @param int $id Author ID
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionSubscribe($id)
+    {
+        $author = $this->findModel($id);
+        $subscription = new \app\models\Subscription();
+        
+        if ($this->request->isPost) {
+            $subscription->author_id = $author->id;
+            $subscription->phone = $this->request->post('Subscription')['phone'];
+            
+            // Проверяем, не подписан ли уже пользователь на этого автора с этим номером телефона
+            $existingSubscription = \app\models\Subscription::find()
+                ->where(['author_id' => $author->id, 'phone' => $subscription->phone])
+                ->one();
+                
+            if ($existingSubscription) {
+                \Yii::$app->session->setFlash('error', 'You are already subscribed to this author with this phone number.');
+            } else {
+                if ($subscription->validate() && $subscription->save()) {
+                    \Yii::$app->session->setFlash('success', 'You have successfully subscribed to new books by ' . Html::encode($author->full_name));
+                } else {
+                    \Yii::$app->session->setFlash('error', 'Error occurred while subscribing. Please check your phone number.');
+                }
+            }
+        }
+        
+        return $this->redirect(['view', 'id' => $author->id]);
     }
 }

@@ -19,6 +19,10 @@ class m251209_115933_create_subscriptions_table extends Migration
         ]);
 
         $this->addForeignKey('fk-subscriptions-author_id', '{{%subscriptions}}', 'author_id', '{{%authors}}', 'id', 'CASCADE', 'CASCADE');
+        
+        $this->createIndex('idx-subscriptions-author_id', '{{%subscriptions}}', 'author_id');
+        $this->createIndex('idx-subscriptions-phone', '{{%subscriptions}}', 'phone');
+        $this->createIndex('idx-subscriptions-author_phone', '{{%subscriptions}}', ['author_id', 'phone']);
     }
 
     /**

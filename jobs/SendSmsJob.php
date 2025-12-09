@@ -7,11 +7,19 @@ use yii\queue\JobInterface;
 use app\models\Subscription;
 use app\models\Book;
 use app\models\Author;
+use app\interfaces\SmsClientInterface;
 
 class SendSmsJob extends BaseObject implements JobInterface
 {
     public $bookId;
     public $message;
+    
+    private ?SmsClientInterface $smsClient = null;
+
+    public function __construct($config = [])
+    {
+        parent::__construct($config);
+    }
 
     public function execute($queue)
     {
@@ -34,54 +42,24 @@ class SendSmsJob extends BaseObject implements JobInterface
                 $authors[] = $author->full_name;
             }
             $authorNames = implode(', ', $authors);
-            $this->message = "Новая книга '{$book->title}' автора(ов) {$authorNames} уже доступна!";
+            $this->message = "New book '{$book->title}' by author(s) {$authorNames} is now available!";
         }
 
         // Отправляем SMS каждому подписчику
         foreach ($subscriptions as $subscription) {
-            $this->sendSms($subscription->phone, $this->message);
+            try {
+                $this->getSmsClient()->sendSms($subscription->phone, $this->message);
+            } catch (\app\exceptions\SmsClientException $e) {
+                \Yii::error("Failed to send SMS to {$subscription->phone}: {$e->getMessage()}", 'sms');
+            }
         }
     }
-
-    private function sendSms($phone, $message)
+    
+    private function getSmsClient(): SmsClientInterface
     {
-        // Используем эмулятор API smspilot.ru для отправки SMS
-        // В реальном приложении здесь будет реальный API-вызов
-        $apiKey = 'A1B2C3D4E5F6A1B2C3D4E5F6'; // тестовый API-ключ (заменить на реальный)
-        
-        $data = [
-            'api_key' => $apiKey,
-            'send' => [
-                [
-                    'phone' => $phone,
-                    'text' => $message
-                ]
-            ]
-        ];
-
-        // Для тестирования будем просто логировать отправку
-        \Yii::info("Sending SMS to {$phone}: {$message}", 'sms');
-        
-        // В реальном приложении использовать:
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, 'https://smspilot.ru/api.php');
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/x-www-form-urlencoded',
-        ]);
-        $response = curl_exec($curl);
-        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        $error = curl_error($curl);
-        curl_close($curl);
-
-        if ($error) {
-            \Yii::error("SMS sending error: {$error}", 'sms');
-        } elseif ($httpCode !== 200) {
-            \Yii::error("SMS sending failed with HTTP code: {$httpCode}, response: {$response}", 'sms');
-        } else {
-            \Yii::info("SMS successfully sent to {$phone}", 'sms');
+        if ($this->smsClient === null) {
+            $this->smsClient = \Yii::$app->get('smsClient');
         }
+        return $this->smsClient;
     }
 }

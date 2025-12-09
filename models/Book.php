@@ -59,7 +59,7 @@ class Book extends \yii\db\ActiveRecord
             'title' => 'Title',
             'year' => 'Year',
             'description' => 'Description',
-            'isbn' => 'Isbn',
+            'isbn' => 'ISBN',
             'cover_image' => 'Cover Image',
             'author_ids' => 'Authors',
         ];

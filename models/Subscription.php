@@ -34,6 +34,7 @@ class Subscription extends \yii\db\ActiveRecord
             [['author_id', 'phone'], 'required'],
             [['author_id'], 'integer'],
             [['phone'], 'string', 'max' => 255],
+            [['phone'], 'match', 'pattern' => '/^[\+]?[0-9\s\-\(\)]+$/', 'message' => 'Please enter a valid phone number.'],
             [['author_id'], 'exist', 'skipOnError' => true, 'targetClass' => Author::class, 'targetAttribute' => ['author_id' => 'id']],
         ];
     }
@@ -45,8 +46,8 @@ class Subscription extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'author_id' => 'Author ID',
-            'phone' => 'Phone',
+            'author_id' => 'Author',
+            'phone' => 'Phone Number',
         ];
     }
 

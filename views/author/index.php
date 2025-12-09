@@ -27,7 +27,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'full_name',
+            [
+                'attribute' => 'full_name',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return Html::a(Html::encode($model->full_name), ['view', 'id' => $model->id]);
+                }
+            ],
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Author $model, $key, $index, $column) {

@@ -6,7 +6,7 @@ $db = require __DIR__ . '/db.php';
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['log', 'queue'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -49,9 +49,13 @@ $config = [
         ],
         'redis' => [
             'class' => 'yii\redis\Connection',
-            'hostname' => $_ENV['REDIS_HOST'] ?? 'redis',
-            'port' => $_ENV['REDIS_PORT'] ?? 6379,
+            'hostname' => $params['redis_hostname'],
+            'port' => $params['redis_port'],
             'database' => 0,
+        ],
+        'smsClient' => [
+            'class' => 'app\components\SmsClient',
+            'apiKey' => $params['smspilot_api_key'],
         ],
         /*
         'urlManager' => [
