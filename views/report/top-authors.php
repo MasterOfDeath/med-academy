@@ -21,16 +21,24 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <!-- Форма для выбора года -->
     <div class="year-selector">
+        <!-- Альтернативный способ: форма с прямым указанием параметра -->
         <?php $form = \yii\widgets\ActiveForm::begin([
             'method' => 'get',
             'action' => ['report/top-authors']
         ]); ?>
         
-        <?= $form->field(new \yii\base\DynamicModel(['year' => $year]), 'year')->input('number', [
-            'min' => '1900',
-            'max' => date('Y'),
-            'value' => $year
-        ])->label('Select Year') ?>
+        <div class="form-group">
+            <label for="year">Select Year</label>
+            <input
+                type="number"
+                id="year"
+                name="year"
+                min="1900"
+                max="<?= date('Y') ?>"
+                value="<?= $year ?>"
+                class="form-control"
+            />
+        </div>
         
         <?= Html::submitButton('Show Report', ['class' => 'btn btn-primary']) ?>
         
