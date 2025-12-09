@@ -1,0 +1,28 @@
+parameters:
+    level: 5
+    paths:
+        - controllers/
+        - models/
+        - components/
+        - widgets/
+        - factories/
+        - jobs/
+        - repositories/
+        - interfaces/
+        - exceptions/
+        - commands/
+    excludePaths:
+        - tests/*
+        - runtime/*
+        - vendor/*
+        - views/*
+        - web/*
+        - assets/*
+    checkMissingIterableValueType: false
+    reportMagicMethods: true
+    reportMagicProperties: true
+    reportPossiblyUnusedCode: false
+
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
