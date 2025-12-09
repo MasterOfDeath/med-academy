@@ -13,8 +13,7 @@ $config = [
     ],
     'components' => [
         'request' => [
-            // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'e6aT28d-8oSEf_g9Mge8Kt1YCSypqodJ',
+            'cookieValidationKey' => $params['cookie_validation_key'],
         ],
         'cache' => [
             'class' => \yii\redis\Cache::class,
