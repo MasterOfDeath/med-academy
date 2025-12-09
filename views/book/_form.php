@@ -1,9 +1,9 @@
 <?php
 
+use app\models\Author;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
-use app\models\Author;
 
 /** @var yii\web\View $this */
 /** @var app\models\Book $model */
@@ -29,15 +29,15 @@ use app\models\Author;
     <?php
     // Получаем список всех авторов для выпадающего списка
     $authors = ArrayHelper::map(Author::find()->all(), 'id', 'full_name');
-    // Получаем текущие ID авторов для этой книги (при редактировании)
-    $selectedAuthors = $model->isNewRecord ? [] : $model->getAuthorIds();
-    ?>
+// Получаем текущие ID авторов для этой книги (при редактировании)
+$selectedAuthors = $model->isNewRecord ? [] : $model->getAuthorIds();
+?>
     
     <?= $form->field($model, 'author_ids')->dropDownList($authors, [
-        'multiple' => true,
-        'size' => 10,
-        'options' => array_combine($selectedAuthors, array_fill(0, count($selectedAuthors), ['selected' => true]))
-    ])->label('Authors') ?>
+    'multiple' => true,
+    'size' => 10,
+    'options' => array_combine($selectedAuthors, array_fill(0, count($selectedAuthors), ['selected' => true])),
+])->label('Authors') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

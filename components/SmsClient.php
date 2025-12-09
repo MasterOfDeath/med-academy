@@ -36,7 +36,7 @@ class SmsClient extends BaseObject implements SmsClientInterface
 
         // Для тестирования будем просто логировать отправку
         Yii::info("Sending SMS to {$phone}: {$message}", 'sms');
-        
+
         // В реальном приложении использовать:
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, 'https://smspilot.ru/api.php');

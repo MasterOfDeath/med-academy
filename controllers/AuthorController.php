@@ -6,7 +6,6 @@ use app\models\Author;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -24,7 +23,7 @@ class AuthorController extends Controller
         $this->subscriptionService = $subscriptionService;
         parent::__construct($id, $module, $config);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -182,7 +181,7 @@ class AuthorController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-    
+
     /**
      * Subscribe to new books by author
      *

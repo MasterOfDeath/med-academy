@@ -24,8 +24,8 @@ use yii\web\IdentityInterface;
  */
 class User extends ActiveRecord implements IdentityInterface
 {
-    const STATUS_DELETED = 0;
-    const STATUS_ACTIVE = 10;
+    public const STATUS_DELETED = 0;
+    public const STATUS_ACTIVE = 10;
 
     public $password;
 
@@ -100,7 +100,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findByPasswordResetToken($token)
     {
-        if (! static::isPasswordResetTokenValid($token)) {
+        if (!static::isPasswordResetTokenValid($token)) {
             return null;
         }
 
@@ -198,7 +198,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->password_reset_token = null;
     }
-    
+
     /**
      * Signs user up.
      *
@@ -206,14 +206,14 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function signup()
     {
-        if (! $this->validate()) {
+        if (!$this->validate()) {
             return null;
         }
-        
+
         $this->generateAuthKey();
         $this->setPassword($this->password);
         $this->status = self::STATUS_ACTIVE;
-        
+
         return $this->save() ? $this : null;
     }
 }

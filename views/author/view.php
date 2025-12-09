@@ -1,8 +1,8 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
 use yii\widgets\ActiveForm;
+use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
 /** @var app\models\Author $model */
@@ -57,10 +57,10 @@ $this->params['breadcrumbs'][] = $this->title;
         
         <?php
         $subscriptionModel = new \app\models\Subscription();
-        $form = ActiveForm::begin([
-            'action' => ['author/subscribe', 'id' => $model->id],
-            'method' => 'post',
-        ]); ?>
+$form = ActiveForm::begin([
+    'action' => ['author/subscribe', 'id' => $model->id],
+    'method' => 'post',
+]); ?>
 
         <?= $form->field($subscriptionModel, 'phone')->textInput(['maxlength' => true, 'placeholder' => 'Enter your phone number']) ?>
 

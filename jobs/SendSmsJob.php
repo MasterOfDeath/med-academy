@@ -12,7 +12,7 @@ class SendSmsJob extends BaseObject implements JobInterface
 {
     private $bookId;
     private $message;
-    
+
     private ?SmsClientInterface $smsClient = null;
 
     public function __construct($config = [])
@@ -23,9 +23,9 @@ class SendSmsJob extends BaseObject implements JobInterface
     public function execute($queue)
     {
         \Yii::info("Starting SMS sending job for book ID: {$this->bookId}", 'sms');
-        
+
         $book = Book::findOne($this->bookId);
-        if (! $book) {
+        if (!$book) {
             return;
         }
 
@@ -34,7 +34,7 @@ class SendSmsJob extends BaseObject implements JobInterface
             ->where(['author_id' => $authorIds])
             ->all();
 
-        if (! $this->message) {
+        if (!$this->message) {
             $authors = [];
             foreach ($book->authors as $author) {
                 $authors[] = $author->full_name;

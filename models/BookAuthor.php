@@ -14,7 +14,6 @@ class BookAuthor extends \yii\db\ActiveRecord
 {
     private const REPORT_CACHE_TAG = 'report-top-authors';
 
-
     /**
      * {@inheritdoc}
      */
@@ -74,17 +73,17 @@ class BookAuthor extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        
+
         $this->invalidateReportCache();
     }
-    
+
     /**
      * {@inheritdoc}
      */
     public function afterDelete()
     {
         parent::afterDelete();
-        
+
         $this->invalidateReportCache();
     }
 

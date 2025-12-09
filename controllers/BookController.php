@@ -2,7 +2,6 @@
 
 namespace app\controllers;
 
-use app\factories\SendSmsJobFactory;
 use app\models\Book;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
@@ -114,7 +113,7 @@ class BookController extends Controller
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $model->cover_image_file = UploadedFile::getInstance($model, 'cover_image_file');
-                
+
                 if ($model->validate()) {
                     $authorIds = \Yii::$app->request->post('Book')['author_ids'];
                     if ($this->bookService->createBook($model, $model->cover_image_file, $authorIds)) {
@@ -147,7 +146,7 @@ class BookController extends Controller
 
         if ($this->request->isPost && $model->load($this->request->post())) {
             $model->cover_image_file = UploadedFile::getInstance($model, 'cover_image_file');
-            
+
             if ($model->validate()) {
                 $authorIds = \Yii::$app->request->post('Book')['author_ids'];
                 if ($this->bookService->updateBook($model, $model->cover_image_file, $authorIds)) {

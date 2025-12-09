@@ -1,7 +1,7 @@
 <?php
 
-use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var yii\data\ArrayDataProvider $dataProvider */
@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="year-selector">
         <?php $form = \yii\widgets\ActiveForm::begin([
             'method' => 'get',
-            'action' => ['report/top-authors']
+            'action' => ['report/top-authors'],
         ]); ?>
         
         <div class="form-group">
@@ -47,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            
+
             [
                 'attribute' => 'author_name',
                 'label' => 'Author Name',

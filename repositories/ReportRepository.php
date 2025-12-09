@@ -29,7 +29,7 @@ class ReportRepository
         $result = Yii::$app->cache->get($cacheKey);
 
         if ($result === false) {
-            $sql = "
+            $sql = '
                 SELECT 
                     a.full_name as author_name,
                     COUNT(b.id) as book_count
@@ -40,7 +40,7 @@ class ReportRepository
                 GROUP BY a.id, a.full_name
                 ORDER BY book_count DESC
                 LIMIT 10
-            ";
+            ';
 
             $command = Yii::$app->db->createCommand($sql, [':year' => $year]);
             $result = $command->queryAll();

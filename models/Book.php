@@ -85,7 +85,7 @@ class Book extends \yii\db\ActiveRecord
     {
         return $this->hasMany(BookAuthor::class, ['book_id' => 'id']);
     }
-    
+
     /**
      * @param array $authorIds IDs авторов
      *
@@ -97,12 +97,12 @@ class Book extends \yii\db\ActiveRecord
         if ($deleteResult === false) {
             throw new \Exception('Failed to delete existing author links for book ID: ' . $this->id);
         }
-        
+
         foreach ($authorIds as $authorId) {
             $bookAuthor = new BookAuthor();
             $bookAuthor->book_id = $this->id;
             $bookAuthor->author_id = $authorId;
-            if (! $bookAuthor->save()) {
+            if (!$bookAuthor->save()) {
                 throw new \Exception('Failed to save author link: book_id=' . $this->id . ', author_id=' . $authorId);
             }
         }
@@ -122,7 +122,7 @@ class Book extends \yii\db\ActiveRecord
             $filename = 'book_' . $this->id . '_' . time() . '.' . $this->cover_image_file->extension;
 
             $uploadDir = Yii::getAlias('@webroot/uploads');
-            if (! file_exists($uploadDir)) {
+            if (!file_exists($uploadDir)) {
                 mkdir($uploadDir, 0775, true);
             }
 
@@ -156,7 +156,7 @@ class Book extends \yii\db\ActiveRecord
     public function afterDelete()
     {
         parent::afterDelete();
-        
+
         $this->invalidateReportCache();
     }
 
