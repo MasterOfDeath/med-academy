@@ -115,7 +115,7 @@ class BookService
             }
 
             $model->cover_image = $filename;
-            $model->save(false);
+            $model->save(false, ['cover_image']);
         }
     }
 
