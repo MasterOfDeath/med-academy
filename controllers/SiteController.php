@@ -64,11 +64,11 @@ class SiteController extends Controller
     /**
      * Displays homepage
      *
-     * @return string
+     * @return string|\yii\web\Response
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        return $this->redirect(['book/index']);
     }
 
     /**
