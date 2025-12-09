@@ -10,7 +10,6 @@ $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__ . '/repositories')
     ->in(__DIR__ . '/interfaces')
     ->in(__DIR__ . '/exceptions')
-    ->in(__DIR__ . '/commands')
     ->name('*.php');
 
 return (new PhpCsFixer\Config())
