@@ -29,21 +29,20 @@ class ReportRepository
         $result = Yii::$app->cache->get($cacheKey);
 
         if ($result === false) {
-            $sql = '
-                SELECT 
-                    a.full_name as author_name,
-                    COUNT(b.id) as book_count
-                FROM authors a
-                JOIN book_authors ba ON a.id = ba.author_id
-                JOIN books b ON ba.book_id = b.id
-                WHERE b.year = :year
-                GROUP BY a.id, a.full_name
-                ORDER BY book_count DESC
-                LIMIT 10
-            ';
+            $query = (new \yii\db\Query())
+                ->select([
+                    'author_name' => 'a.full_name',
+                    'book_count' => 'COUNT(b.id)',
+                ])
+                ->from('authors a')
+                ->innerJoin('book_authors ba', 'a.id = ba.author_id')
+                ->innerJoin('books b', 'ba.book_id = b.id')
+                ->where(['b.year' => $year])
+                ->groupBy(['a.id', 'a.full_name'])
+                ->orderBy(['book_count' => SORT_DESC])
+                ->limit(10);
 
-            $command = Yii::$app->db->createCommand($sql, [':year' => $year]);
-            $result = $command->queryAll();
+            $result = $query->all();
 
             Yii::$app->cache->set(
                 $cacheKey,

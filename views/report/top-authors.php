@@ -43,21 +43,28 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php \yii\widgets\ActiveForm::end(); ?>
     </div>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+    <?php if ($dataProvider->getTotalCount() > 0): ?>
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'tableOptions' => ['class' => 'table table-striped table-hover'],
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
 
-            [
-                'attribute' => 'author_name',
-                'label' => 'Author Name',
+                [
+                    'attribute' => 'author_name',
+                    'label' => 'Author Name',
+                ],
+                [
+                    'attribute' => 'book_count',
+                    'label' => 'Number of Books',
+                    'contentOptions' => ['style' => 'text-align: right;'],
+                ],
             ],
-            [
-                'attribute' => 'book_count',
-                'label' => 'Number of Books',
-                'contentOptions' => ['style' => 'text-align: right;'],
-            ],
-        ],
-    ]); ?>
+        ]); ?>
+    <?php else: ?>
+        <div class="alert alert-info">
+            No data found for this year.
+        </div>
+    <?php endif; ?>
 
 </div>
