@@ -33,3 +33,5 @@ tests/_support/_generated
 /.docker
 
 .env
+
+web/uploads

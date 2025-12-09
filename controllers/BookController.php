@@ -174,8 +174,7 @@ class BookController extends Controller
 
         if ($this->request->isPost && $model->load($this->request->post())) {
             $model->cover_image_file = UploadedFile::getInstance($model, 'cover_image_file');
-            
-            $oldAuthorIds = $model->getAuthorIds();
+
             if ($model->validate()) {
                 $transaction = \Yii::$app->db->beginTransaction();
 

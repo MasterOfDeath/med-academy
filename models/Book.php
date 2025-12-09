@@ -107,7 +107,7 @@ class Book extends \yii\db\ActiveRecord
             }
         }
     }
-    
+
     /**
      * @return array
      */
@@ -115,41 +115,38 @@ class Book extends \yii\db\ActiveRecord
     {
         return $this->getAuthors()->select('id')->column();
     }
-    
-    /**
-     * Загружает файл обложки
-     */
+
     public function uploadCoverImage()
     {
         if ($this->cover_image_file !== null) {
             $filename = 'book_' . $this->id . '_' . time() . '.' . $this->cover_image_file->extension;
-            
+
             $uploadDir = Yii::getAlias('@webroot/uploads');
             if (! file_exists($uploadDir)) {
                 mkdir($uploadDir, 0775, true);
             }
-            
+
             $this->cover_image_file->saveAs($uploadDir . '/' . $filename);
-            
+
             if ($this->cover_image && file_exists($uploadDir . '/' . $this->cover_image)) {
                 unlink($uploadDir . '/' . $this->cover_image);
             }
-            
+
             $this->cover_image = $filename;
-            
-            return true;
+
+            return $this->save(false, ['cover_image']);
         }
-        
+
         return false;
     }
-    
+
     /**
      * {@inheritdoc}
      */
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        
+
         $this->invalidateReportCache();
     }
 
