@@ -71,6 +71,7 @@ $config = [
             \Psr\Http\Client\ClientInterface::class => [
                 'class' => \GuzzleHttp\Client::class,
             ],
+            \yii\queue\Queue::class => \yii\di\Instance::of('queue'),
         ],
     ],
     'params' => $params,

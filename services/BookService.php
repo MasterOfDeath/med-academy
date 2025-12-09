@@ -6,12 +6,14 @@ use app\factories\SendSmsJobFactory;
 use app\models\Book;
 use app\models\BookAuthor;
 use Yii;
+use yii\queue\Queue;
 use yii\web\UploadedFile;
 
 class BookService
 {
     public function __construct(
-        private SendSmsJobFactory $smsJobFactory
+        private SendSmsJobFactory $smsJobFactory,
+        private Queue $queue,
     ) {
     }
 
@@ -39,7 +41,8 @@ class BookService
                 $job = $this->smsJobFactory->create([
                     'bookId' => $model->id,
                 ]);
-                Yii::$app->queue->push($job);
+
+                $this->queue->push($job);
 
                 $transaction->commit();
 
