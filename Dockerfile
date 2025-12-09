@@ -6,8 +6,8 @@ ARG GROUP_ID=100
 
 # Update packages and install necessary tools
 RUN apt-get update && \
-    apt-get install -y libredis-dev git && \
-    docker-php-ext-install redis && \
+    apt-get install --no-install-recommends -y libhiredis-dev git && \
+    pecl install redis && \
     docker-php-ext-enable redis && \
     # Create user with specific UID/GID
     groupmod -g $GROUP_ID -o www-data && \
