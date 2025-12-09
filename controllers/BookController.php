@@ -19,10 +19,10 @@ class BookController extends Controller
     public function __construct(
         $id,
         $module,
-        private SendSmsJobFactory $smsJobFactory,
+        private \app\services\BookService $bookService,
         $config = [],
     ) {
-        $this->smsJobFactory = $smsJobFactory;
+        $this->bookService = $bookService;
         parent::__construct($id, $module, $config);
     }
 
@@ -116,36 +116,9 @@ class BookController extends Controller
                 $model->cover_image_file = UploadedFile::getInstance($model, 'cover_image_file');
                 
                 if ($model->validate()) {
-                    $transaction = \Yii::$app->db->beginTransaction();
-
-                    try {
-                        if ($model->save()) {
-                            $model->uploadCoverImage();
-                            
-                            $authorIds = \Yii::$app->request->post('Book')['author_ids'];
-                            if (! empty($authorIds)) {
-                                $model->linkAuthors($authorIds);
-                            }
-                            
-                            $job = $this->smsJobFactory->create([
-                                'bookId' => $model->id,
-                            ]);
-                            \Yii::$app->queue->push($job);
-                            
-                            $transaction->commit();
-
-                            return $this->redirect(['view', 'id' => $model->id]);
-                        } else {
-                            $transaction->rollback();
-                        }
-                    } catch (\Exception $e) {
-                        $transaction->rollback();
-
-                        throw $e;
-                    } catch (\Throwable $e) {
-                        $transaction->rollback();
-
-                        throw $e;
+                    $authorIds = \Yii::$app->request->post('Book')['author_ids'];
+                    if ($this->bookService->createBook($model, $model->cover_image_file, $authorIds)) {
+                        return $this->redirect(['view', 'id' => $model->id]);
                     }
                 }
             }
@@ -174,33 +147,11 @@ class BookController extends Controller
 
         if ($this->request->isPost && $model->load($this->request->post())) {
             $model->cover_image_file = UploadedFile::getInstance($model, 'cover_image_file');
-
+            
             if ($model->validate()) {
-                $transaction = \Yii::$app->db->beginTransaction();
-
-                try {
-                    if ($model->save()) {
-                        $model->uploadCoverImage();
-                        
-                        $authorIds = \Yii::$app->request->post('Book')['author_ids'];
-                        if (! empty($authorIds)) {
-                            $model->linkAuthors($authorIds);
-                        }
-                        
-                        $transaction->commit();
-
-                        return $this->redirect(['view', 'id' => $model->id]);
-                    } else {
-                        $transaction->rollback();
-                    }
-                } catch (\Exception $e) {
-                    $transaction->rollback();
-
-                    throw $e;
-                } catch (\Throwable $e) {
-                    $transaction->rollback();
-
-                    throw $e;
+                $authorIds = \Yii::$app->request->post('Book')['author_ids'];
+                if ($this->bookService->updateBook($model, $model->cover_image_file, $authorIds)) {
+                    return $this->redirect(['view', 'id' => $model->id]);
                 }
             }
         }

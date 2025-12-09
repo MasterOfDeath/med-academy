@@ -15,6 +15,16 @@ use yii\web\NotFoundHttpException;
  */
 class AuthorController extends Controller
 {
+    public function __construct(
+        $id,
+        $module,
+        private \app\services\SubscriptionService $subscriptionService,
+        $config = [],
+    ) {
+        $this->subscriptionService = $subscriptionService;
+        parent::__construct($id, $module, $config);
+    }
+    
     /**
      * @inheritDoc
      */
@@ -185,28 +195,15 @@ class AuthorController extends Controller
     public function actionSubscribe($id)
     {
         $author = $this->findModel($id);
-        $subscription = new \app\models\Subscription();
-        
+
         if ($this->request->isPost) {
-            $subscription->author_id = $author->id;
-            $subscription->phone = $this->request->post('Subscription')['phone'];
-            
-            // Проверяем, не подписан ли уже пользователь на этого автора с этим номером телефона
-            $existingSubscription = \app\models\Subscription::find()
-                ->where(['author_id' => $author->id, 'phone' => $subscription->phone])
-                ->one();
-                
-            if ($existingSubscription) {
-                \Yii::$app->session->setFlash('error', 'You are already subscribed to this author with this phone number.');
-            } else {
-                if ($subscription->validate() && $subscription->save()) {
-                    \Yii::$app->session->setFlash('success', 'You have successfully subscribed to new books by ' . Html::encode($author->full_name));
-                } else {
-                    \Yii::$app->session->setFlash('error', 'Error occurred while subscribing. Please check your phone number.');
-                }
-            }
+            $phone = $this->request->post('Subscription')['phone'];
+
+            $result = $this->subscriptionService->subscribeToAuthor($author->id, $phone);
+
+            \Yii::$app->session->setFlash($result['type'], $result['message']);
         }
-        
+
         return $this->redirect(['view', 'id' => $author->id]);
     }
 }
