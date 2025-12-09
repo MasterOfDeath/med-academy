@@ -19,9 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
         This report shows the Top 10 authors who published the most books in the year <?= $year ?>.
     </p>
 
-    <!-- Форма для выбора года -->
     <div class="year-selector">
-        <!-- Альтернативный способ: форма с прямым указанием параметра -->
         <?php $form = \yii\widgets\ActiveForm::begin([
             'method' => 'get',
             'action' => ['report/top-authors']
